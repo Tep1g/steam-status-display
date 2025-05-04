@@ -1,4 +1,9 @@
 #ifndef WIFI_H
 #define WIFI_H
 
+enum wifi_return_status {
+    WIFI_STATUS_OK = 0,
+    WIFI_STATUS_ERROR = -1,
+};
+
 #endif /* WIFI_H */
