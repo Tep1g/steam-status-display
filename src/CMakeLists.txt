@@ -16,6 +16,7 @@ target_include_directories(app PRIVATE ${HEADER_DIRS})
 # pull in common dependencies
 target_link_libraries(app
     pico_stdlib
+    pico_cyw43_arch_lwip_threadsafe_background
     hardware_spi
     hardware_dma
     hardware_irq
