@@ -2,11 +2,13 @@ set(SRC_FILES
     "main.c"
     "lcd_task/st7796/st7796.c"
     "lcd_task/lcd.c"
+    "{CMAKE_CURRENT_SOURCE_DIR}/../submodules/tiny-json/tiny-json.c"
 )
 
 set(HEADER_DIRS 
     "lcd_task/st7796"
     "lcd_task"
+    "{CMAKE_CURRENT_SOURCE_DIR}/../submodules/tiny-json/tiny-json.h"
 )
 
 add_executable(app ${SRC_FILES})
