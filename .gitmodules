@@ -8,3 +8,6 @@
 [submodule "submodules/lvgl"]
 	path = submodules/lvgl
 	url = git@github.com:lvgl/lvgl.git
+[submodule "submodules/tiny-json"]
+	path = submodules/tiny-json
+	url = git@github.com:rafagafe/tiny-json.git
