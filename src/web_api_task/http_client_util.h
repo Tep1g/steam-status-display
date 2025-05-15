@@ -100,7 +100,7 @@ int http_client_request_sync(struct async_context *context, HTTP_REQUEST_T *req)
 /*! \brief A http header callback that can be passed to \em http_client_init or \em http_client_init_secure
  *  \ingroup pico_http_client
  *
- * An implementation of the http header callback which just prints headers to stdout
+ * An implementation of the http header callback
  *
  * @param arg argument specified on initialisation
  * @param hdr header pbuf(s) (may contain data also)
@@ -108,12 +108,12 @@ int http_client_request_sync(struct async_context *context, HTTP_REQUEST_T *req)
  * @param content_len content length as received in the headers (-1 if not received)
  * @return if != zero is returned, the connection is aborted
  */
-err_t http_client_header_print_fn(httpc_state_t *connection, void *arg, struct pbuf *hdr, u16_t hdr_len, u32_t content_len);
+err_t http_client_header_callback(httpc_state_t *connection, void *arg, struct pbuf *hdr, u16_t hdr_len, u32_t content_len);
 
 /*! \brief A http recv callback that can be passed to http_client_init or http_client_init_secure
  *  \ingroup pico_http_client
  *
- * An implementation of the http recv callback which just prints the http body to stdout
+ * An implementation of the http recv callback
  *
  * @param arg argument specified on initialisation
  * @param conn http client connection
@@ -121,6 +121,6 @@ err_t http_client_header_print_fn(httpc_state_t *connection, void *arg, struct p
  * @param err Error code in the case of an error
  * @return if != zero is returned, the connection is aborted
  */
-err_t http_client_receive_print_fn(void *arg, struct altcp_pcb *conn, struct pbuf *p, err_t err);
+err_t http_client_receive_callback(void *arg, struct altcp_pcb *conn, struct pbuf *p, err_t err);
 
 #endif
