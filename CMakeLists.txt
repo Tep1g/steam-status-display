@@ -27,6 +27,8 @@ add_library(freertos_config INTERFACE)
 # Add the freertos config directory as an include path
 target_include_directories(freertos_config INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/config/freertos)
 
+target_include_directories(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/config/lwip)
+
 # Pull in the LVGL library
 add_subdirectory(submodules/lvgl)
 
