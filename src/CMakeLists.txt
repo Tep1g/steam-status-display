@@ -26,6 +26,7 @@ target_link_libraries(app
     FreeRTOS-Kernel-Heap4
     freertos_config
     lvgl
+    lwipopts
 )
 
 # create map/bin/hex/uf2 file etc.
