@@ -27,6 +27,9 @@ target_link_libraries(app
     freertos_config
     lvgl
     lwipopts
+    pico_lwip_http
+    pico_lwip_mbedtls
+    pico_mbedtls
 )
 
 # create map/bin/hex/uf2 file etc.
