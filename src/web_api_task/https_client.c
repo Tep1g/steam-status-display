@@ -2,6 +2,7 @@
 #include "http_client_util.h"
 #include "pico/stdlib.h"
 #include "pico/cyw43_arch.h"
+#include <stdbool.h>
 
 #define PLAYER_SUMMARIES_MAX_SIZE 3000
 #define PLAYER_NAME_MAX_SIZE 33
