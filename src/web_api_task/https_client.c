@@ -30,11 +30,11 @@ void https_client_init() {
 
     while(cyw43_arch_wifi_connect_timeout_ms(ssid, password, CYW43_AUTH_WPA2_AES_PSK, 4000));
 
-    init_steam_request_data(PLAYER_SUMMARIES_MAX_SIZE, PLAYER_ICON_MAX_SIZE, PLAYER_GAME_ICON_MAX_SIZE);
-
     steam_user_data.display_name = malloc(PLAYER_NAME_MAX_SIZE*sizeof(char));
     steam_user_data.avatar_icon_jpg = malloc(PLAYER_ICON_MAX_SIZE*sizeof(uint8_t));
     steam_user_data.game_icon_jpg = malloc(PLAYER_GAME_ICON_MAX_SIZE*sizeof(uint8_t));
+
+    init_steam_request_data(PLAYER_SUMMARIES_MAX_SIZE, steam_user_data.avatar_icon_jpg, steam_user_data.game_icon_jpg);
 
     https_client_inited = true;
 }
