@@ -20,6 +20,8 @@ static struct steam_user_data_t steam_user_data = {
 
 struct steam_user_data_t *get_steam_user_data_ptr() {
     return &steam_user_data;
+}
+
 void https_client_init() {
     if (https_client_inited) {
         return;
