@@ -87,8 +87,6 @@ struct steam_request_data_t {
     enum steam_request_type request_type;
 };
 
-void init_steam_request_data(size_t player_summaries_max_size, uint8_t *player_icon_jpg, uint8_t *game_icon_jpg);
-
 /*! \brief Perform a http request asynchronously
  *  \ingroup pico_lwip
  *

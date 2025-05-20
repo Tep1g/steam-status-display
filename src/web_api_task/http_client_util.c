@@ -36,23 +36,6 @@
 #define HTTP_ERROR printf
 #endif
 
-static struct steam_request_data_t *steam_request_data;
-
-static bool steam_request_data_inited = false;
-
-void init_steam_request_data(size_t player_summaries_max_size, uint8_t *avatar_icon_jpg, uint8_t *game_icon_jpg) {
-    if (steam_request_data_inited) {
-        return;
-    }
-    steam_request_data->summary_json_str = malloc(player_summaries_max_size*sizeof(char));
-    steam_request_data->player_icon_size = 0;
-    steam_request_data->player_icon_jpg = avatar_icon_jpg;
-    steam_request_data->game_icon_size = 0;
-    steam_request_data->game_icon_jpg = game_icon_jpg;
-
-    steam_request_data_inited = true;
-}
-
 static err_t internal_header_fn(httpc_state_t *connection, void *arg, struct pbuf *hdr, u16_t hdr_len, u32_t content_len) {
     assert(arg);
     HTTP_REQUEST_T *req = (HTTP_REQUEST_T*)arg;

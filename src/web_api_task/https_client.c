@@ -37,7 +37,5 @@ void https_client_init() {
     steam_user_data.avatar_icon_jpg = malloc(PLAYER_ICON_MAX_SIZE*sizeof(uint8_t));
     steam_user_data.game_icon_jpg = malloc(PLAYER_GAME_ICON_MAX_SIZE*sizeof(uint8_t));
 
-    init_steam_request_data(PLAYER_SUMMARIES_MAX_SIZE, steam_user_data.avatar_icon_jpg, steam_user_data.game_icon_jpg);
-
     https_client_inited = true;
 }
