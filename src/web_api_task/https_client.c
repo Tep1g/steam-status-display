@@ -21,8 +21,23 @@ struct steam_user_data_t *get_steam_user_data_ptr() {
     return &steam_user_data;
 }
 
-static struct steam_response_json resp_summaries;
-static struct steam_response_jpg resp_avatar_icon, resp_game_icon;
+static char summaries_buf[PLAYER_SUMMARIES_MAX_SIZE*sizeof(char)];
+static struct steam_response_json resp_summaries = {
+    .buf = summaries_buf,
+    .len = 0
+};
+
+static uint8_t avatar_icon_buf[PLAYER_ICON_MAX_SIZE*sizeof(uint8_t)];
+static struct steam_response_jpg resp_avatar_icon = {
+    .buf = avatar_icon_buf,
+    .size = 0
+};
+
+static uint8_t game_icon_buf[PLAYER_GAME_ICON_MAX_SIZE*sizeof(uint8_t)];
+static struct steam_response_jpg resp_game_icon = {
+    .buf = game_icon_buf,
+    .size = 0
+};
 
 void https_client_init() {
     if (https_client_inited) {
@@ -34,10 +49,6 @@ void https_client_init() {
     cyw43_arch_enable_sta_mode();
 
     while(cyw43_arch_wifi_connect_timeout_ms(ssid, password, CYW43_AUTH_WPA2_AES_PSK, 4000));
-
-    resp_summaries.buf = malloc(PLAYER_SUMMARIES_MAX_SIZE*sizeof(char));
-    resp_avatar_icon.buf = malloc(PLAYER_ICON_MAX_SIZE*sizeof(uint8_t));
-    resp_game_icon.buf = malloc(PLAYER_GAME_ICON_MAX_SIZE*sizeof(uint8_t));
 
     https_client_inited = true;
 }
