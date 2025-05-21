@@ -21,9 +21,9 @@ struct steam_user_data_t *get_steam_user_data_ptr() {
     return &steam_user_data;
 }
 
-static char summaries_buf[PLAYER_SUMMARIES_MAX_SIZE*sizeof(char)];
-static struct steam_response_json resp_summaries = {
-    .buf = summaries_buf,
+static char json_buf[PLAYER_SUMMARIES_MAX_SIZE*sizeof(char)];
+static struct steam_response_json resp_json = {
+    .buf = json_buf,
     .len = 0
 };
 
