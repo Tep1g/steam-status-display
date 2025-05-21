@@ -4,9 +4,9 @@
 #include "pico/cyw43_arch.h"
 #include <stdbool.h>
 
-#define PLAYER_SUMMARIES_MAX_SIZE 3000
-#define PLAYER_ICON_MAX_SIZE 8000
-#define PLAYER_GAME_ICON_MAX_SIZE 4000 
+#define JSON_RESPONSE_MAX_SIZE 3000U
+#define AVATAR_ICON_MAX_SIZE 8000U
+#define GAME_ICON_MAX_SIZE 4000U
 
 static char ssid[];
 static char password[];
@@ -21,19 +21,19 @@ struct steam_user_data_t *get_steam_user_data_ptr() {
     return &steam_user_data;
 }
 
-static char json_buf[PLAYER_SUMMARIES_MAX_SIZE*sizeof(char)];
+static char json_buf[JSON_RESPONSE_MAX_SIZE*sizeof(char)];
 static struct steam_response_json resp_json = {
     .buf = json_buf,
     .len = 0
 };
 
-static uint8_t avatar_icon_buf[PLAYER_ICON_MAX_SIZE*sizeof(uint8_t)];
+static uint8_t avatar_icon_buf[AVATAR_ICON_MAX_SIZE*sizeof(uint8_t)];
 static struct steam_response_jpg resp_avatar_icon = {
     .buf = avatar_icon_buf,
     .size = 0
 };
 
-static uint8_t game_icon_buf[PLAYER_GAME_ICON_MAX_SIZE*sizeof(uint8_t)];
+static uint8_t game_icon_buf[GAME_ICON_MAX_SIZE*sizeof(uint8_t)];
 static struct steam_response_jpg resp_game_icon = {
     .buf = game_icon_buf,
     .size = 0
