@@ -22,6 +22,9 @@ struct steam_user_data_t *get_steam_user_data_ptr() {
     return &steam_user_data;
 }
 
+static struct steam_response_json resp_summaries;
+static struct steam_response_jpg resp_avatar_icon, resp_game_icon;
+
 void https_client_init() {
     if (https_client_inited) {
         return;

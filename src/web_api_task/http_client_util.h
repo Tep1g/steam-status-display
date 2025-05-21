@@ -72,14 +72,15 @@ typedef struct HTTP_REQUEST {
 
 struct async_context;
 
-struct steam_request_data_t {
-    char *summary_json_str;
-    uint16_t summary_json_len;
-    uint8_t *player_icon_jpg;
-    uint16_t player_icon_size;
-    uint8_t *game_icon_jpg;
-    uint16_t game_icon_size;
+struct steam_response_json {
+    char *buf;
+    uint16_t len;
 };
+
+struct steam_response_jpg {
+    uint8_t *buf;
+    uint16_t size;
+}
 
 /*! \brief Perform a http request asynchronously
  *  \ingroup pico_lwip
