@@ -74,6 +74,7 @@ struct async_context;
 
 struct steam_request_data_t {
     char *summary_json_str;
+    uint16_t summary_json_len;
     uint8_t *player_icon_jpg;
     uint16_t player_icon_size;
     uint8_t *game_icon_jpg;
