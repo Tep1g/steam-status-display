@@ -9,6 +9,8 @@
 
 #include "lwip/apps/http_client.h"
 
+#define STEAM_ICON_HASH_LEN 40
+
 /*! \brief Parameters used to make HTTP request
  *  \ingroup pico_lwip
  */
@@ -79,6 +81,7 @@ struct steam_response_json {
 
 struct steam_response_jpg {
     uint8_t *buf;
+    char hash[STEAM_ICON_HASH_LEN+1];   //+1 for null terminator
     uint16_t size;
 }
 
