@@ -5,7 +5,6 @@
 #include <stdbool.h>
 
 #define PLAYER_SUMMARIES_MAX_SIZE 3000
-#define PLAYER_NAME_MAX_SIZE 33
 #define PLAYER_ICON_MAX_SIZE 8000
 #define PLAYER_GAME_ICON_MAX_SIZE 4000 
 
