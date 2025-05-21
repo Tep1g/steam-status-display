@@ -72,19 +72,12 @@ typedef struct HTTP_REQUEST {
 
 struct async_context;
 
-enum steam_request_type {
-    PLAYER_SUMMARIES,
-    PLAYER_ICON,
-    PLAYER_CURRENT_GAME_ICON
-};
-
 struct steam_request_data_t {
     char *summary_json_str;
     uint8_t *player_icon_jpg;
     uint16_t player_icon_size;
     uint8_t *game_icon_jpg;
     uint16_t game_icon_size;
-    enum steam_request_type request_type;
 };
 
 /*! \brief Perform a http request asynchronously
