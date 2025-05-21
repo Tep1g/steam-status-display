@@ -131,6 +131,8 @@ err_t http_client_header_callback(httpc_state_t *connection, void *arg, struct p
  * @param err Error code in the case of an error
  * @return if != zero is returned, the connection is aborted
  */
-err_t http_client_receive_callback(void *arg, struct altcp_pcb *conn, struct pbuf *p, err_t err);
+err_t http_client_recv_json_callback(void *arg, struct altcp_pcb *conn, struct pbuf *p, err_t err);
+
+err_t http_client_recv_jpg_callback(void *arg, struct altcp_pcb *conn, struct pbuf *p, err_t err);
 
 #endif

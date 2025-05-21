@@ -36,6 +36,36 @@
 #define HTTP_ERROR printf
 #endif
 
+err_t http_client_header_callback(__unused httpc_state_t *connection, __unused void *arg, __unused struct pbuf *hdr, __unused u16_t hdr_len, __unused u32_t content_len) {
+    return ERR_OK;
+}
+
+err_t http_client_recv_json_callback(void *arg, struct altcp_pcb *conn, struct pbuf *p, err_t err) {
+    struct steam_response_json *response_json = (struct steam_response_json*)arg;
+    uint16_t offset = 0;
+    while (offset < p->tot_len) {
+        response_json->buf[(response_json->len)+offset] = (char)pbuf_get_at(p, offset);
+        offset++;
+    }
+    response_json->len += offset;
+    altcp_recved(conn, p->tot_len);
+    pbuf_free(p);
+    return ERR_OK;
+}
+
+err_t http_client_recv_jpg_callback(void *arg, struct altcp_pcb *conn, struct pbuf *p, err_t err) {
+    struct steam_response_jpg *response_jpg = (struct steam_response_jpg*)arg;
+    uint16_t offset = 0;
+    while (offset < p->tot_len) {
+        response_jpg->buf[(response_jpg->size)+offset] = pbuf_get_at(p, offset);
+        offset++;
+    }
+    response_jpg->size += offset;
+    altcp_recved(conn, p->tot_len);
+    pbuf_free(p);
+    return ERR_OK;
+}
+
 static err_t internal_header_fn(httpc_state_t *connection, void *arg, struct pbuf *hdr, u16_t hdr_len, u32_t content_len) {
     assert(arg);
     HTTP_REQUEST_T *req = (HTTP_REQUEST_T*)arg;
