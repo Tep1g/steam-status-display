@@ -23,6 +23,6 @@ struct steam_user_data_t {
 
 struct steam_user_data_t *get_steam_user_data_ptr(void);
 
-void https_client_init();
+void https_client_task(void *pvParameters);
 
 #endif /* HTTPS_CLIENT_H */
