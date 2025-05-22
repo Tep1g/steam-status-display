@@ -4,9 +4,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <stdio.h>
-#include <stdbool.h>
-#include <string.h>
+#include "pico/stdlib.h"
 #include "pico/async_context.h"
 #include "lwip/altcp.h"
 #include "lwip/altcp_tls.h"

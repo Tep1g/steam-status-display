@@ -7,6 +7,7 @@
 #ifndef HTTP_CLIENT_UTIL_H
 #define HTTP_CLIENT_UTIL_H
 
+#include "pico/stdlib.h"
 #include "lwip/apps/http_client.h"
 
 #define STEAM_ICON_HASH_LEN 40

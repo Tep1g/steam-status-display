@@ -1,8 +1,9 @@
 #ifndef HTTPS_CLIENT_H
 #define HTTPS_CLIENT_H
 
-#include <stdbool.h>
-#include <semphr.h>
+#include "pico/stdlib.h"
+#include "FreeRTOS.h"
+#include "semphr.h"
 
 enum game_icon_state_t {
     GAME_ICON_SWITCHED,

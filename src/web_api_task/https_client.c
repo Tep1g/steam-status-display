@@ -1,11 +1,9 @@
 #include "https_client.h"
 #include "http_client_util.h"
-#include "FreeRTOS.h"
 #include "pico/stdlib.h"
+#include "FreeRTOS.h"
 #include "pico/cyw43_arch.h"
 #include "tiny-json.h"
-#include <stdbool.h>
-#include <string.h>
 
 #define STEAM_DISPLAY_NAME_MAX_LEN 32
 #define JSON_RESPONSE_MAX_SIZE 3000U
