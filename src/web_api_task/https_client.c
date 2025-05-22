@@ -31,10 +31,6 @@ static char url_request_buffer[MAX_URL_REQUEST_LEN*sizeof(char)];
 
 static bool https_client_inited = false;
 
-struct steam_user_data_t *get_steam_user_data_ptr() {
-    return &steam_user_data;
-}
-
 static char display_name_buf[STEAM_DISPLAY_NAME_MAX_LEN+1];
 
 static char json_buf[JSON_RESPONSE_MAX_SIZE*sizeof(char)];
@@ -66,6 +62,10 @@ static struct steam_user_data_t steam_user_data = {
     .game_icon_jpg = game_icon_buf,
     .game_icon_state = GAME_ICON_NO_CHANGE
 };
+
+struct steam_user_data_t *get_steam_user_data_ptr() {
+    return &steam_user_data;
+}
 
 static void https_client_init() {
     if (https_client_inited) {
