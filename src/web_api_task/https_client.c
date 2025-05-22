@@ -13,10 +13,6 @@ static char password[];
 
 static bool https_client_inited = false;
 
-static struct steam_user_data_t steam_user_data = {
-    .data_is_ready = false
-};
-
 struct steam_user_data_t *get_steam_user_data_ptr() {
     return &steam_user_data;
 }
@@ -37,6 +33,13 @@ static uint8_t game_icon_buf[GAME_ICON_MAX_SIZE*sizeof(uint8_t)];
 static struct steam_response_jpg resp_game_icon = {
     .buf = game_icon_buf,
     .size = 0
+};
+
+static struct steam_user_data_t steam_user_data = {
+    .data_is_ready = false,
+    .display_name_changed = false,
+    .avatar_icon_changed = false,
+    .game_icon_state = GAME_ICON_NO_CHANGE
 };
 
 void https_client_init() {
