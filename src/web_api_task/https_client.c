@@ -29,12 +29,14 @@ static struct steam_response_json resp_json = {
 static uint8_t avatar_icon_buf[AVATAR_ICON_MAX_SIZE*sizeof(uint8_t)];
 static struct steam_response_jpg resp_avatar_icon = {
     .buf = avatar_icon_buf,
+    .hash = {0},
     .size = 0
 };
 
 static uint8_t game_icon_buf[GAME_ICON_MAX_SIZE*sizeof(uint8_t)];
 static struct steam_response_jpg resp_game_icon = {
     .buf = game_icon_buf,
+    .hash = {0},
     .size = 0
 };
 
