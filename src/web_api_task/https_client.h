@@ -1,5 +1,5 @@
-#ifndef TLS_CLIENT_H
-#define TLS_CLIENT_H
+#ifndef HTTPS_CLIENT_H
+#define HTTPS_CLIENT_H
 
 #include <stdbool.h>
 #include <semphr.h>
