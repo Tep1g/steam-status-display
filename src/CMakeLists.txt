@@ -31,6 +31,7 @@ target_link_libraries(app
     freertos_config
     lvgl
     lwipopts
+    mbedtls_config
     pico_lwip_http
     pico_lwip_mbedtls
     pico_mbedtls
