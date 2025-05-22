@@ -83,7 +83,7 @@ struct steam_response_jpg {
     uint8_t *buf;
     char hash[STEAM_ICON_HASH_LEN+1];   //+1 for null terminator
     uint16_t size;
-}
+};
 
 /*! \brief Perform a http request asynchronously
  *  \ingroup pico_lwip
