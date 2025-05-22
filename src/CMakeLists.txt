@@ -2,12 +2,16 @@ set(SRC_FILES
     "main.c"
     "lcd_task/st7796/st7796.c"
     "lcd_task/lcd.c"
+    "web_api_task/https_client.c"
+    "web_api_task/http_client_util/http_client_util.c"
     "../submodules/tiny-json/tiny-json.c"
 )
 
 set(HEADER_DIRS 
     "lcd_task/st7796"
     "lcd_task"
+    "web_api_task/https_client.h"
+    "web_api_task/http_client_util/http_client_util.h"
     "../submodules/tiny-json/tiny-json.h"
 )
 
