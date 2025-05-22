@@ -10,9 +10,9 @@ set(SRC_FILES
 set(HEADER_DIRS 
     "lcd_task/st7796"
     "lcd_task"
-    "web_api_task/https_client.h"
-    "web_api_task/http_client_util/http_client_util.h"
-    "../submodules/tiny-json/tiny-json.h"
+    "web_api_task"
+    "web_api_task/http_client_util"
+    "../submodules/tiny-json"
 )
 
 add_executable(app ${SRC_FILES})
