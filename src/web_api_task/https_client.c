@@ -81,7 +81,7 @@ static void https_client_init() {
     https_client_inited = true;
 }
 
-static void make_http_request(void *cb_arg, altcp_recv_fn recv_fn, char host, char url_request) {
+static void make_http_request(void *cb_arg, altcp_recv_fn recv_fn, char *host, char *url_request) {
     HTTP_REQUEST_T request;
     request.callback_arg = cb_arg;
     request.hostname = host;
