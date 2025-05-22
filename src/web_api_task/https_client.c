@@ -4,6 +4,7 @@
 #include "pico/cyw43_arch.h"
 #include <stdbool.h>
 
+#define STEAM_DISPLAY_NAME_MAX_LEN 32
 #define JSON_RESPONSE_MAX_SIZE 3000U
 #define AVATAR_ICON_MAX_SIZE 8000U
 #define GAME_ICON_MAX_SIZE 4000U
@@ -16,6 +17,8 @@ static bool https_client_inited = false;
 struct steam_user_data_t *get_steam_user_data_ptr() {
     return &steam_user_data;
 }
+
+static char display_name_buf[STEAM_DISPLAY_NAME_MAX_LEN+1];
 
 static char json_buf[JSON_RESPONSE_MAX_SIZE*sizeof(char)];
 static struct steam_response_json resp_json = {
