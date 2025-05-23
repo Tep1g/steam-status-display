@@ -179,6 +179,8 @@ static void steam_user_data_update() {
         return;
     }
 
+    xSemaphoreTake(steam_user_data.mutex, 0);
+
     resp_json.len = 0;
     make_http_request((void *)&resp_json, http_client_recv_json_callback, API_HOSTNAME, PLAYER_SUMMARIES_URL_REQUEST);
     resp_json.buf[resp_json.len] = '\0';
@@ -188,8 +190,6 @@ static void steam_user_data_update() {
 
     const json_t *players_list = json_getProperty(summaries_response, "players");
     const json_t *player = json_getChild(players_list);
-
-    xSemaphoreTake(steam_user_data.mutex, 0);
 
     update_display_name(player);
     update_avatar_icon(player);
