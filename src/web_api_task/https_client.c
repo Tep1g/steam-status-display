@@ -134,7 +134,9 @@ static void update_game_icon(const json_t *player_property, json_t *json_mem) {
         make_http_request((void *)&resp_json, http_client_recv_json_callback, API_HOSTNAME, url_request_buffer);
         resp_json.buf[resp_json.len] = '\0';
 
-        const json_t *owned_games_response = json_create(resp_json.buf, json_mem, JSON_MAX_FIELDS);
+        const json_t *parent_json_object = json_create(resp_json.buf, json_mem, JSON_MAX_FIELDS);
+        const json_t *owned_games_response = json_getProperty(parent_json_object, "response");
+
         const json_t *games_list = json_getProperty(owned_games_response, "games");
 
         const json_t *game = json_getChild(games_list);
@@ -186,7 +188,8 @@ static void steam_user_data_update() {
     resp_json.buf[resp_json.len] = '\0';
 
     json_t json_mem[JSON_MAX_FIELDS];
-    const json_t *summaries_response = json_create(resp_json.buf, json_mem, JSON_MAX_FIELDS);
+    const json_t *parent_json_object = json_create(resp_json.buf, json_mem, JSON_MAX_FIELDS);
+    const json_t *summaries_response = json_getProperty(parent_json_object, "response");
 
     const json_t *players_list = json_getProperty(summaries_response, "players");
     const json_t *player = json_getChild(players_list);
