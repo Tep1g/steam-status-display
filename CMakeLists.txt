@@ -17,15 +17,15 @@ endif()
 set(PICO_SDK_PATH ${CMAKE_CURRENT_SOURCE_DIR}/submodules/pico-sdk)
 include(${PICO_SDK_PATH}/external/pico_sdk_import.cmake)
 
-# # Pull in FreeRTOS
-# set(FREERTOS_KERNEL_PATH ${CMAKE_CURRENT_SOURCE_DIR}/submodules/FreeRTOS-Kernel)
-# include(${FREERTOS_KERNEL_PATH}/portable/ThirdParty/GCC/RP2040/FreeRTOS_Kernel_import.cmake)
+# Pull in FreeRTOS
+set(FREERTOS_KERNEL_PATH ${CMAKE_CURRENT_SOURCE_DIR}/submodules/FreeRTOS-Kernel)
+include(${FREERTOS_KERNEL_PATH}/portable/ThirdParty/GCC/RP2040/FreeRTOS_Kernel_import.cmake)
 
-# # Create an interface library for freertos config
-# add_library(freertos_config INTERFACE)
+# Create an interface library for freertos config
+add_library(freertos_config INTERFACE)
 
-# # Add the freertos config directory as an include path
-# target_include_directories(freertos_config INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/config/freertos)
+# Add the freertos config directory as an include path
+target_include_directories(freertos_config INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/config/freertos)
 
 # add_library(lwipopts INTERFACE)
 

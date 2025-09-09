@@ -26,9 +26,9 @@ target_link_libraries(app
     # hardware_spi
     # hardware_dma
     # hardware_irq
-    # FreeRTOS-Kernel
-    # FreeRTOS-Kernel-Heap4
-    # freertos_config
+    FreeRTOS-Kernel
+    FreeRTOS-Kernel-Heap4
+    freertos_config
     # lvgl
     # lwipopts
     # mbedtls_config
