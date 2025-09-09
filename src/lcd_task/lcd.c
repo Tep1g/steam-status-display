@@ -109,6 +109,9 @@ void lcd_task(void *pvParameters) {
     gpio_set_function(ST7796_SPI_SCK, GPIO_FUNC_SPI);
     gpio_set_function(ST7796_SPI_MOSI, GPIO_FUNC_SPI);
     gpio_set_function(ST7796_SPI_MISO, GPIO_FUNC_SPI);
+    gpio_init(ST7796_SPI_CS);
+    gpio_init(ST7796_SPI_DCX);
+    gpio_init(ST7796_SPI_RST);
     gpio_set_dir(ST7796_SPI_CS, GPIO_OUT);
     gpio_set_dir(ST7796_SPI_DCX, GPIO_OUT);
     gpio_set_dir(ST7796_SPI_RST, GPIO_OUT);
