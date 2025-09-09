@@ -137,7 +137,34 @@ void lcd_task(void *pvParameters) {
         &st7796_dma_config
     );
     
+    lv_color_t *buf1 = NULL;
+    lv_color_t *buf2 = NULL;
+
+    uint32_t buf_size = st7796_hor_res * st7796_ver_res / 10 * lv_color_format_get_size(lv_display_get_color_format(lv_st7796));
+
+    buf1 = lv_malloc(buf_size);
+    buf2 = lv_malloc(buf_size);
+
+    lv_display_set_buffers(lv_st7796, buf1, buf2, buf_size, LV_DISPLAY_RENDER_MODE_PARTIAL);
+
+    lv_obj_t *scr = lv_screen_active();
+    lv_obj_set_style_bg_color(scr, lv_color_white(), 0);
+    lv_obj_set_style_bg_opa(scr, LV_OPA_100, 0);
+    
+    user_data = get_steam_user_data_ptr();
+    lv_user_name_label = lv_label_create(lv_screen_active());
+    lv_obj_align(lv_user_name_label, LV_ALIGN_BOTTOM_LEFT, 0, 0);
+
+    lv_avatar_icon_img = lv_image_create(lv_screen_active());
+    lv_obj_align(lv_avatar_icon_img, LV_ALIGN_LEFT_MID, 0, 0);
+
+    lv_game_icon_img = lv_image_create(lv_screen_active());
+    lv_obj_align(lv_game_icon_img, LV_ALIGN_RIGHT_MID, 0, 0);
+
+    struct repeating_timer display_timer;
+    add_repeating_timer_ms(10, display_timer_callback, NULL, &display_timer);
+
     while (1) {
-        // Main loop for the LCD task
+        update_lv_objects();
     }
 }
