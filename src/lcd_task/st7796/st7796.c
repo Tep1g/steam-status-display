@@ -84,7 +84,6 @@ lv_disp_t *st7796_init(
         uint dma_irq_index, 
         dma_channel_config *dma_config
 ) {
-        st7796.disp = lv_st7796_create(st7796_hor_res, st7796_ver_res, st7796_flag, st7796_send_cmd, st7796_send_color);
         st7796.spi = spi;
         st7796.cs_gpio = cs_gpio;
         st7796.dcx_gpio = dcx_gpio;
@@ -99,13 +98,16 @@ lv_disp_t *st7796_init(
         gpio_put(st7796.dcx_gpio, 1);
 
         gpio_put(st7796.rst_gpio, 1);
-        sleep_ms(50);
+        sleep_ms(100);
         gpio_put(st7796.rst_gpio, 0);
         sleep_ms(100);
         gpio_put(st7796.rst_gpio, 1);
         sleep_ms(100);
 
         gpio_put(st7796.cs_gpio, 1);
+        sleep_ms(10);
+
+        st7796.disp = lv_st7796_create(st7796_hor_res, st7796_ver_res, st7796_flag, st7796_send_cmd, st7796_send_color);
 
         return st7796.disp;
 }

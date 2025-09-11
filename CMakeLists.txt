@@ -4,14 +4,14 @@ if (NOT DEFINED CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
 endif()
 
-# set(LV_CONF_BUILD_DISABLE_DEMOS 1)
-# set(LV_CONF_BUILD_DISABLE_EXAMPLES 1)
+set(LV_CONF_BUILD_DISABLE_DEMOS 1)
+set(LV_CONF_BUILD_DISABLE_EXAMPLES 1)
 
 # Set custom lvgl config path
-# add_compile_definitions(
-#     LV_CONF_INCLUDE_SIMPLE
-#     LV_CONF_PATH="${CMAKE_CURRENT_SOURCE_DIR}/config/lvgl/lv_conf.h"
-# )
+add_compile_definitions(
+    LV_CONF_INCLUDE_SIMPLE
+    LV_CONF_PATH="${CMAKE_CURRENT_SOURCE_DIR}/config/lvgl/lv_conf.h"
+)
 
 # Pull in SDK (must be before project)
 set(PICO_SDK_PATH ${CMAKE_CURRENT_SOURCE_DIR}/submodules/pico-sdk)
@@ -36,7 +36,7 @@ target_include_directories(freertos_config INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}
 # target_include_directories(mbedtls_config INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/config/mbedtls)
 
 # # Pull in the LVGL library
-# add_subdirectory(submodules/lvgl)
+add_subdirectory(submodules/lvgl)
 
 project(app C CXX ASM)
 set(CMAKE_C_STANDARD 11)
