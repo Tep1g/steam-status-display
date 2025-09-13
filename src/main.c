@@ -4,8 +4,18 @@
 #include "timers.h"
 #include "st7796.h"
 #include "lvgl.h"
+#include "pico/cyw43_arch.h"
+#include "http_client_util.h"
+#include "tiny-json.h"
+#include <string.h>
 // #include "lcd.h"
 // #include "https_client.h"
+
+#define SSID ""
+#define PASSWORD ""
+
+#define MOCK_IO_EXAMPLE_HOSTNAME ""
+#define MOCK_IO_URL_REQUEST ""
 
 #define LVGL_TICK_PERIOD_MS 100
 
@@ -20,6 +30,30 @@ const uint32_t st7796_hor_res = 320;
 const uint32_t st7796_ver_res = 480;
 const lv_lcd_flag_t st7796_flag = LV_LCD_FLAG_NONE;
 const uint st7796_dma_irq_index = 0;
+
+static void make_http_request(void *cb_arg, altcp_recv_fn recv_fn, char *host, char *url_request) {
+    HTTP_REQUEST_T request = {0};
+    request.callback_arg = cb_arg;
+    request.hostname = host;
+    request.url = url_request;
+    request.headers_fn = http_client_header_callback;
+    request.recv_fn = recv_fn;
+    http_client_request_sync(cyw43_arch_async_context(), &request);
+}
+
+static void https_client_init() {
+
+    printf("Initing cyw43 arch with country\n");
+    if(cyw43_arch_init_with_country(CYW43_COUNTRY_USA));
+
+    printf("Enabling cyw43 wifi sta mode\n");
+    cyw43_arch_enable_sta_mode();
+
+    printf("Initing cyw43 wifi connection\n");
+    while(cyw43_arch_wifi_connect_timeout_ms(SSID, PASSWORD, CYW43_AUTH_WPA2_AES_PSK, 4000)) {
+        printf("Failed to connect, retrying\n");
+    }
+}
 
 static void lv_tick_timer_callback(TimerHandle_t xTimer) {
     lv_tick_inc(LVGL_TICK_PERIOD_MS);
@@ -59,9 +93,6 @@ static void task_2(void *pvParameters) {
     
     lv_init();
     lv_delay_set_cb(sleep_ms);
-
-    TimerHandle_t lv_tick_timer = xTimerCreate("lv_tick Timer", pdMS_TO_TICKS(LVGL_TICK_PERIOD_MS), pdFALSE, (void *)0, lv_tick_timer_callback);
-    xTimerStart(lv_tick_timer, 0);
 
     spi_init(spi0, 12500000);
     spi_set_slave(spi0, false);
@@ -121,14 +152,49 @@ static void task_2(void *pvParameters) {
     lv_obj_set_width(obj, LV_SIZE_CONTENT);
     lv_obj_set_style_text_font(obj, &lv_font_montserrat_14, 0);
     lv_obj_set_style_text_color(obj, lv_color_black(), 0);
-    lv_label_set_text(obj, "Hello World!");
+
+    printf("Connecting to wifi\n");
+    https_client_init();
+    sleep_ms(50);
+    printf("Connected to wifi\n");
+
+    char resp_json_buf[30] = {0};
+    struct steam_response_json resp_json = {
+        .buf = resp_json_buf,
+        .len = 0
+    };
+
+    printf("Making http request\n");
+
+    make_http_request((void *)&resp_json, http_client_recv_json_callback, MOCK_IO_EXAMPLE_HOSTNAME, MOCK_IO_URL_REQUEST);
+
+    printf("Received response\n");
+    printf(resp_json_buf);
+    printf("\n");
+
+    printf("Converting response to JSON object\n");
+    json_t json_mem[64];
+    printf("1\n");
+    const json_t *json_object = json_create(resp_json_buf, json_mem, 64);
+    printf("2\n");
+    const json_t *msg_property = json_getProperty(json_object, "message");
+    printf("3\n");
+    const char *msg = json_getValue(msg_property);
+    printf("4\n");
+    char msg_buffer[30] = {0};
+    printf("5\n");
+    strcpy(msg_buffer, msg);
+    printf("Extracted message\n");
+    lv_label_set_text(obj, msg_buffer);
+    printf("Outputted to display\n");
+
+    TimerHandle_t lv_tick_timer = xTimerCreate("lv_tick Timer", pdMS_TO_TICKS(LVGL_TICK_PERIOD_MS), pdFALSE, (void *)0, lv_tick_timer_callback);
+    xTimerStart(lv_tick_timer, 0);
 
     while (1) {
         lv_timer_handler();
-        gpio_put(17, 1);
-        sleep_ms(500);
-        gpio_put(17, 0);
-        sleep_ms(500);
+        printf("Looping in task 2\n");
+        sleep_ms(1000);
     }
 }
 
@@ -137,12 +203,12 @@ int main() {
     
     TaskHandle_t task_1_handle;
     xTaskCreate(task_1, "task_1", configMINIMAL_STACK_SIZE*4, NULL, 1, &task_1_handle);
-    UBaseType_t task_1_uxCoreAffinityMask = 1 << 0; // Set core affinity to core 0
+    UBaseType_t task_1_uxCoreAffinityMask = 1 << 1; // Set core affinity to core 0
     vTaskCoreAffinitySet(task_1_handle, task_1_uxCoreAffinityMask);
 
     TaskHandle_t task_2_handle;
-    xTaskCreate(task_2, "task_2", configMINIMAL_STACK_SIZE*4, NULL, 1, &task_2_handle);
-    UBaseType_t task_2_uxCoreAffinityMask = 1 << 1; // Set core affinity to core 1
+    xTaskCreate(task_2, "task_2", configMINIMAL_STACK_SIZE*4, NULL, 2, &task_2_handle);
+    UBaseType_t task_2_uxCoreAffinityMask = 1 << 0; // Set core affinity to core 1
     vTaskCoreAffinitySet(task_2_handle, task_2_uxCoreAffinityMask);
 
     vTaskStartScheduler();

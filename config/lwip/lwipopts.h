@@ -1,17 +1,24 @@
 #ifndef _LWIPOPTS_H
 #define _LWIPOPTS_H
 
+#define TCPIP_THREAD_STACKSIZE 1024
+#define DEFAULT_THREAD_STACKSIZE 1024
+#define DEFAULT_UDP_RECVMBOX_SIZE 8
+#define DEFAULT_TCP_RECVMBOX_SIZE 8
+#define TCPIP_MBOX_SIZE 8
+
 // allow override in some examples
 #ifndef NO_SYS
-#define NO_SYS                      1
+#define NO_SYS                      0
 #endif
 // allow override in some examples
 #ifndef LWIP_SOCKET
-#define LWIP_SOCKET                 0
+#define LWIP_SOCKET                 1
 #endif
 #if PICO_CYW43_ARCH_POLL
 #define MEM_LIBC_MALLOC             1
 #else
+#define LWIP_TIMEVAL_PRIVATE 0
 // MEM_LIBC_MALLOC is incompatible with non polling versions
 #define MEM_LIBC_MALLOC             0
 #endif
@@ -93,8 +100,8 @@
 #define LWIP_ALTCP 1
 
 // If you don't want to use TLS (just a http request) you can avoid linking to mbedtls and remove the following
-#define LWIP_ALTCP_TLS           1
-#define LWIP_ALTCP_TLS_MBEDTLS   1
+// #define LWIP_ALTCP_TLS           0
+// #define LWIP_ALTCP_TLS_MBEDTLS   0
 
 // Note bug in lwip with LWIP_ALTCP and LWIP_DEBUG
 // https://savannah.nongnu.org/bugs/index.php?62159

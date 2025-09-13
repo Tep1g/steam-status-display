@@ -7,7 +7,9 @@
 #include "pico/stdlib.h"
 #include "pico/async_context.h"
 #include "lwip/altcp.h"
+#if LWIP_ALTCP && LWIP_ALTCP_TLS
 #include "lwip/altcp_tls.h"
+#endif
 #include "http_client_util.h"
 
 #ifndef HTTP_INFO
@@ -93,6 +95,7 @@ static void internal_result_fn(void *arg, httpc_result_t httpc_result, u32_t rx_
     }
 }
 
+#if LWIP_ALTCP && LWIP_ALTCP_TLS
 // Override altcp_tls_alloc to set sni
 static struct altcp_pcb *altcp_tls_alloc_sni(void *arg, u8_t ip_type) {
     assert(arg);
@@ -105,10 +108,11 @@ static struct altcp_pcb *altcp_tls_alloc_sni(void *arg, u8_t ip_type) {
     mbedtls_ssl_set_hostname(altcp_tls_context(pcb), req->hostname);
     return pcb;
 }
+#endif
 
 // Make a http request, complete when req->complete returns true
 int http_client_request_async(async_context_t *context, HTTP_REQUEST_T *req) {
-#if LWIP_ALTCP
+#if LWIP_ALTCP && LWIP_ALTCP_TLS
     const uint16_t default_port = req->tls_config ? 443 : 80;
     if (req->tls_config) {
         if (!req->tls_allocator.alloc) {
