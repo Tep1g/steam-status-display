@@ -14,8 +14,8 @@
 #define SSID ""
 #define PASSWORD ""
 
-#define MOCK_IO_EXAMPLE_HOSTNAME ""
-#define MOCK_IO_URL_REQUEST ""
+#define JPG_EXAMPLE_HOSTNAME "avatars.steamstatic.com"
+#define JPG_URL_REQUEST "/575dad25afc50972728d2b85cccb4f6093ebe175_full.jpg"
 
 #define LVGL_TICK_PERIOD_MS 100
 
@@ -25,6 +25,8 @@
 #define ST7796_SPI_CS 5
 #define ST7796_SPI_DCX 6
 #define ST7796_SPI_RST 7
+
+static uint8_t game_icon_buf[20000*sizeof(uint8_t)];
 
 const uint32_t st7796_hor_res = 320;
 const uint32_t st7796_ver_res = 480;
@@ -94,7 +96,7 @@ static void task_2(void *pvParameters) {
     lv_init();
     lv_delay_set_cb(sleep_ms);
 
-    spi_init(spi0, 12500000);
+    spi_init(spi0, 40000000);
     spi_set_slave(spi0, false);
     gpio_set_function(ST7796_SPI_SCK, GPIO_FUNC_SPI);
     gpio_set_function(ST7796_SPI_MOSI, GPIO_FUNC_SPI);
@@ -145,49 +147,50 @@ static void task_2(void *pvParameters) {
     lv_obj_t *scr = lv_screen_active();
     lv_obj_set_style_bg_color(scr, lv_color_white(), 0);
     lv_obj_set_style_bg_opa(scr, LV_OPA_100, 0);
-    
-    lv_obj_t *obj = lv_label_create(scr);
-    lv_obj_set_align(obj, LV_ALIGN_CENTER);
-    lv_obj_set_height(obj, LV_SIZE_CONTENT);
-    lv_obj_set_width(obj, LV_SIZE_CONTENT);
-    lv_obj_set_style_text_font(obj, &lv_font_montserrat_14, 0);
-    lv_obj_set_style_text_color(obj, lv_color_black(), 0);
+
+    lv_obj_t *lv_img = lv_image_create(scr);
+    lv_obj_align(lv_img, LV_ALIGN_CENTER, 0, 0);
 
     printf("Connecting to wifi\n");
     https_client_init();
     sleep_ms(50);
     printf("Connected to wifi\n");
 
-    char resp_json_buf[30] = {0};
-    struct steam_response_json resp_json = {
-        .buf = resp_json_buf,
-        .len = 0
+    struct steam_response_jpg resp_game_icon = {
+        .buf = game_icon_buf,
+        .hash = {0},
+        .size = 0
     };
 
     printf("Making http request\n");
-
-    make_http_request((void *)&resp_json, http_client_recv_json_callback, MOCK_IO_EXAMPLE_HOSTNAME, MOCK_IO_URL_REQUEST);
+    make_http_request((void *)&resp_game_icon, http_client_recv_jpg_callback, JPG_EXAMPLE_HOSTNAME, JPG_URL_REQUEST);
 
     printf("Received response\n");
-    printf(resp_json_buf);
     printf("\n");
+    
+    // const lv_image_dsc_t lv_game_icon_dsc = {
+    //     .header.cf = LV_COLOR_FORMAT_RGB888,
+    //     .header.magic = LV_IMAGE_HEADER_MAGIC,
+    //     .header.w = 64,
+    //     .header.h = 64,
+    //     .header.stride = 64*3,
+    //     .data = resp_game_icon.buf,
+    //     .data_size = 4096 * 3
+    // };
 
-    printf("Converting response to JSON object\n");
-    json_t json_mem[64];
-    printf("1\n");
-    const json_t *json_object = json_create(resp_json_buf, json_mem, 64);
-    printf("2\n");
-    const json_t *msg_property = json_getProperty(json_object, "message");
-    printf("3\n");
-    const char *msg = json_getValue(msg_property);
-    printf("4\n");
-    char msg_buffer[30] = {0};
-    printf("5\n");
-    strcpy(msg_buffer, msg);
-    printf("Extracted message\n");
-    lv_label_set_text(obj, msg_buffer);
-    printf("Outputted to display\n");
+    const lv_image_dsc_t lv_game_icon_dsc = {
+        .header.cf = LV_COLOR_FORMAT_RGB888,
+        .header.magic = LV_IMAGE_HEADER_MAGIC,
+        .header.w = 184,
+        .header.h = 184,
+        .header.stride = 184*3,
+        .data = resp_game_icon.buf,
+        .data_size = 33856 * 3
+    };
+    
+    lv_image_set_src(lv_img, &lv_game_icon_dsc);
 
+    printf("Decompressed JPEG response body\n");
     TimerHandle_t lv_tick_timer = xTimerCreate("lv_tick Timer", pdMS_TO_TICKS(LVGL_TICK_PERIOD_MS), pdFALSE, (void *)0, lv_tick_timer_callback);
     xTimerStart(lv_tick_timer, 0);
 
