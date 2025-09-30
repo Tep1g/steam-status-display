@@ -68,7 +68,7 @@ static void update_user_name() {
 
 static void update_lv_objects() {
     updating_lv_objects = true;
-    xSemaphoreTake(user_data->mutex, 0);
+    xSemaphoreTake(user_data->mutex, portMAX_DELAY);
     if(user_data->data_is_ready) {
         update_avatar_icon();
         update_game_icon();
