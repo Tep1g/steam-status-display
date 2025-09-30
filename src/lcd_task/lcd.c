@@ -26,41 +26,26 @@ static bool updating_lv_objects = false;
 static lv_obj_t *lv_user_name_label;
 static lv_obj_t *lv_avatar_icon_img;
 static lv_obj_t *lv_game_icon_img;
+static lv_image_dsc_t lv_game_icon_dsc;
+static lv_image_dsc_t lv_avatar_icon_dsc;
 
 static void update_avatar_icon() {
     if (user_data->avatar_icon_changed) {
-        const lv_image_dsc_t lv_avatar_icon_dsc = {
-            .header.cf = LV_COLOR_FORMAT_RAW,
-            .header.w = 64,
-            .header.h = 64,
-            .data = user_data->avatar_icon_jpg,
-            .data_size = (uint32_t)(*(user_data->avatar_icon_size))
-        };
-        lv_image_set_src(lv_avatar_icon_img, &lv_avatar_icon_dsc);
+        lv_obj_invalidate(lv_avatar_icon_img);
+        user_data->avatar_icon_changed = false;
     }
-}
-
-static void update_lv_game_icon_img() {
-    const lv_image_dsc_t lv_game_icon_dsc = {
-        .header.cf = LV_COLOR_FORMAT_RAW,
-        .header.w = 32,
-        .header.h = 32,
-        .data = user_data->game_icon_jpg,
-        .data_size = (uint32_t)(*(user_data->game_icon_size))
-    };
-    lv_image_set_src(lv_game_icon_img, &lv_game_icon_dsc);
 }
 
 static void update_game_icon() {
     switch (user_data->game_icon_state) {
         case GAME_ICON_SWITCHED:
-            update_lv_game_icon_img();
+            lv_obj_invalidate(lv_game_icon_img);
             break;
 
         case GAME_ICON_SET:
             lv_game_icon_img = lv_image_create(lv_screen_active());
             lv_obj_align(lv_game_icon_img, LV_ALIGN_RIGHT_MID, 0, 0);
-            update_lv_game_icon_img();
+            lv_image_set_src(lv_game_icon_img, &lv_game_icon_dsc);
             break;
 
         case GAME_ICON_CLEARED:
@@ -160,9 +145,18 @@ void lcd_task(void *pvParameters) {
 
     lv_avatar_icon_img = lv_image_create(lv_screen_active());
     lv_obj_align(lv_avatar_icon_img, LV_ALIGN_LEFT_MID, 0, 0);
-
-    lv_game_icon_img = lv_image_create(lv_screen_active());
-    lv_obj_align(lv_game_icon_img, LV_ALIGN_RIGHT_MID, 0, 0);
+    lv_avatar_icon_dsc.header.cf = LV_COLOR_FORMAT_RAW;
+    lv_avatar_icon_dsc.header.w = 64;
+    lv_avatar_icon_dsc.header.h = 64;
+    lv_avatar_icon_dsc.data = user_data->avatar_icon_jpg;
+    lv_avatar_icon_dsc.data_size = (uint32_t)(*(user_data->avatar_icon_size));
+    lv_image_set_src(lv_avatar_icon_img, &lv_avatar_icon_dsc);
+    
+    lv_game_icon_dsc.header.cf = LV_COLOR_FORMAT_RAW;
+    lv_game_icon_dsc.header.w = 32;
+    lv_game_icon_dsc.header.h = 32;
+    lv_game_icon_dsc.data = user_data->game_icon_jpg;
+    lv_game_icon_dsc.data_size = (uint32_t)(*(user_data->game_icon_size));
 
     struct repeating_timer display_timer;
     add_repeating_timer_ms(10, display_timer_callback, NULL, &display_timer);
