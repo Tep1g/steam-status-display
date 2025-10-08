@@ -6,6 +6,7 @@
 #include "FreeRTOS.h"
 #include "https_client.h"
 #include "st7796.h"
+#include "portmacro.h"
 
 #define ST7796_SPI_SCK 2
 #define ST7796_SPI_MOSI 3
@@ -84,6 +85,10 @@ static bool display_timer_callback() {
         lv_timer_handler();
     }
     return true;
+}
+
+void vApplicationTickHook() {
+    lv_tick_inc(portTICK_PERIOD_MS);
 }
 
 void lcd_task(void *pvParameters) {
