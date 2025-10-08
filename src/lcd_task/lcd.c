@@ -132,6 +132,8 @@ void lcd_task(void *pvParameters) {
         st7796_dma_irq_index, 
         &st7796_dma_config
     );
+
+    lv_display_set_rotation(lv_st7796, LV_DISPLAY_ROTATION_270);
     
     lv_color_t *buf1 = NULL;
     lv_color_t *buf2 = NULL;
