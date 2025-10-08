@@ -88,6 +88,7 @@ static bool display_timer_callback() {
 
 void lcd_task(void *pvParameters) {
     lv_init();
+    lv_delay_set_cb(sleep_ms);
 
     spi_init(spi0, 40000000);
     spi_set_slave(spi0, false);
