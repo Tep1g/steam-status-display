@@ -4,6 +4,9 @@
 #include "hardware/irq.h"
 #include "hardware/spi.h"
 #include "lvgl.h"
+#include "FreeRTOS.h"
+#include "portmacro.h"
+#include "task.h"
 
 static struct ST7796 {
         lv_display_t *disp;
@@ -98,13 +101,14 @@ lv_disp_t *st7796_init(
         gpio_put(st7796.dcx_gpio, 1);
 
         gpio_put(st7796.rst_gpio, 1);
-        sleep_ms(50);
+        vTaskDelay(pdMS_TO_TICKS(100));
         gpio_put(st7796.rst_gpio, 0);
-        sleep_ms(100);
+        vTaskDelay(pdMS_TO_TICKS(100));
         gpio_put(st7796.rst_gpio, 1);
-        sleep_ms(100);
+        vTaskDelay(pdMS_TO_TICKS(100));
 
         gpio_put(st7796.cs_gpio, 1);
+        vTaskDelay(pdMS_TO_TICKS(10));
 
         st7796.disp = lv_st7796_create(st7796_hor_res, st7796_ver_res, st7796_flag, st7796_send_cmd, st7796_send_color);
 
