@@ -3,7 +3,11 @@
 #include "hardware/dma.h"
 #include "hardware/irq.h"
 #include "hardware/spi.h"
+#include "FreeRTOS.h"
+#include "https_client.h"
 #include "st7796.h"
+#include "timers.h"
+#include "portmacro.h"
 
 #define ST7796_SPI_SCK 2
 #define ST7796_SPI_MOSI 3
@@ -12,19 +16,95 @@
 #define ST7796_SPI_DCX 6
 #define ST7796_SPI_RST 7
 
+#define LV_TIMER_PERIOD_MS 100
+
 const uint32_t st7796_hor_res = 320;
 const uint32_t st7796_ver_res = 480;
 const lv_lcd_flag_t st7796_flag = LV_LCD_FLAG_NONE;
 const uint st7796_dma_irq_index = 0;
 
+static struct steam_user_data_t *user_data;
+
+static bool updating_lv_objects = true;
+
+static lv_obj_t *lv_user_name_label;
+static lv_obj_t *lv_avatar_icon_img;
+static lv_obj_t *lv_game_icon_img;
+static lv_image_dsc_t lv_game_icon_dsc;
+static lv_image_dsc_t lv_avatar_icon_dsc;
+
+static void update_avatar_icon() {
+    if (user_data->avatar_icon_changed) {
+        lv_obj_invalidate(lv_avatar_icon_img);
+        user_data->avatar_icon_changed = false;
+    }
+}
+
+static void update_game_icon() {
+    switch (user_data->game_icon_state) {
+        case GAME_ICON_SWITCHED:
+            lv_obj_invalidate(lv_game_icon_img);
+            break;
+
+        case GAME_ICON_SET:
+            lv_game_icon_img = lv_image_create(lv_screen_active());
+            lv_obj_align(lv_game_icon_img, LV_ALIGN_RIGHT_MID, 0, 0);
+            lv_image_set_src(lv_game_icon_img, &lv_game_icon_dsc);
+            break;
+
+        case GAME_ICON_CLEARED:
+            lv_obj_delete(lv_game_icon_img);
+            break;
+
+        case GAME_ICON_NO_CHANGE:
+            break;
+
+        default:
+            break;
+    }
+}
+
+static void update_user_name() {
+    if(user_data->display_name_changed) {
+        lv_label_set_text(lv_user_name_label, user_data->display_name);
+    }
+}
+
+static void update_lv_objects() {
+    updating_lv_objects = true;
+    xSemaphoreTake(user_data->mutex, portMAX_DELAY);
+    if(user_data->data_is_ready) {
+        update_avatar_icon();
+        update_game_icon();
+        update_user_name();
+        user_data->data_is_ready = false;
+    }
+    xSemaphoreGive(user_data->mutex);
+    updating_lv_objects = false;
+}
+
+static void lv_timer_callback() {
+    if (!updating_lv_objects) {
+        lv_timer_handler();
+    }
+}
+
+void vApplicationTickHook() {
+    lv_tick_inc(portTICK_PERIOD_MS);
+}
+
 void lcd_task(void *pvParameters) {
     lv_init();
+    lv_delay_set_cb(sleep_ms);
 
     spi_init(spi0, 40000000);
     spi_set_slave(spi0, false);
     gpio_set_function(ST7796_SPI_SCK, GPIO_FUNC_SPI);
     gpio_set_function(ST7796_SPI_MOSI, GPIO_FUNC_SPI);
     gpio_set_function(ST7796_SPI_MISO, GPIO_FUNC_SPI);
+    gpio_init(ST7796_SPI_CS);
+    gpio_init(ST7796_SPI_DCX);
+    gpio_init(ST7796_SPI_RST);
     gpio_set_dir(ST7796_SPI_CS, GPIO_OUT);
     gpio_set_dir(ST7796_SPI_DCX, GPIO_OUT);
     gpio_set_dir(ST7796_SPI_RST, GPIO_OUT);
@@ -52,8 +132,45 @@ void lcd_task(void *pvParameters) {
         st7796_dma_irq_index, 
         &st7796_dma_config
     );
+
+    lv_display_set_rotation(lv_st7796, LV_DISPLAY_ROTATION_270);
     
+    lv_color_t *buf1 = NULL;
+    lv_color_t *buf2 = NULL;
+
+    uint32_t buf_size = st7796_hor_res * st7796_ver_res / 10 * lv_color_format_get_size(lv_display_get_color_format(lv_st7796));
+
+    buf1 = lv_malloc(buf_size);
+    buf2 = lv_malloc(buf_size);
+
+    lv_display_set_buffers(lv_st7796, buf1, buf2, buf_size, LV_DISPLAY_RENDER_MODE_PARTIAL);
+
+    lv_obj_t *scr = lv_screen_active();
+    lv_obj_set_style_bg_color(scr, lv_color_white(), 0);
+    lv_obj_set_style_bg_opa(scr, LV_OPA_100, 0);
+    
+    user_data = get_steam_user_data_ptr();
+    lv_user_name_label = lv_label_create(lv_screen_active());
+    lv_obj_align(lv_user_name_label, LV_ALIGN_BOTTOM_LEFT, 0, 0);
+
+    lv_avatar_icon_img = lv_image_create(lv_screen_active());
+    lv_obj_align(lv_avatar_icon_img, LV_ALIGN_LEFT_MID, 0, 0);
+    lv_avatar_icon_dsc.header.cf = LV_COLOR_FORMAT_RAW;
+    lv_avatar_icon_dsc.header.w = 64;
+    lv_avatar_icon_dsc.header.h = 64;
+    lv_avatar_icon_dsc.data = user_data->avatar_icon_jpg;
+    lv_avatar_icon_dsc.data_size = (uint32_t)(*(user_data->avatar_icon_size));
+    lv_image_set_src(lv_avatar_icon_img, &lv_avatar_icon_dsc);
+    
+    lv_game_icon_dsc.header.cf = LV_COLOR_FORMAT_RAW;
+    lv_game_icon_dsc.header.w = 32;
+    lv_game_icon_dsc.header.h = 32;
+    lv_game_icon_dsc.data = user_data->game_icon_jpg;
+    lv_game_icon_dsc.data_size = (uint32_t)(*(user_data->game_icon_size));
+
+    TimerHandle_t lv_timer = xTimerCreate("LVGL Timer", pdMS_TO_TICKS(LV_TIMER_PERIOD_MS), pdTRUE, (void *)0, lv_timer_callback);
+
     while (1) {
-        // Main loop for the LCD task
+        update_lv_objects();
     }
 }
