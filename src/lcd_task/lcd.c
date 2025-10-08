@@ -25,7 +25,7 @@ const uint st7796_dma_irq_index = 0;
 
 static struct steam_user_data_t *user_data;
 
-static bool updating_lv_objects = false;
+static bool updating_lv_objects = true;
 
 static lv_obj_t *lv_user_name_label;
 static lv_obj_t *lv_avatar_icon_img;
