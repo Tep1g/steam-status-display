@@ -6,6 +6,7 @@
 #include "FreeRTOS.h"
 #include "https_client.h"
 #include "st7796.h"
+#include "timers.h"
 #include "portmacro.h"
 
 #define ST7796_SPI_SCK 2
@@ -14,6 +15,8 @@
 #define ST7796_SPI_CS 5
 #define ST7796_SPI_DCX 6
 #define ST7796_SPI_RST 7
+
+#define LV_TIMER_PERIOD_MS 100
 
 const uint32_t st7796_hor_res = 320;
 const uint32_t st7796_ver_res = 480;
@@ -80,11 +83,10 @@ static void update_lv_objects() {
     updating_lv_objects = false;
 }
 
-static bool display_timer_callback() {
+static void lv_timer_callback() {
     if (!updating_lv_objects) {
         lv_timer_handler();
     }
-    return true;
 }
 
 void vApplicationTickHook() {
@@ -164,8 +166,7 @@ void lcd_task(void *pvParameters) {
     lv_game_icon_dsc.data = user_data->game_icon_jpg;
     lv_game_icon_dsc.data_size = (uint32_t)(*(user_data->game_icon_size));
 
-    struct repeating_timer display_timer;
-    add_repeating_timer_ms(10, display_timer_callback, NULL, &display_timer);
+    TimerHandle_t lv_timer = xTimerCreate("LVGL Timer", pdMS_TO_TICKS(LV_TIMER_PERIOD_MS), pdTRUE, (void *)0, lv_timer_callback);
 
     while (1) {
         update_lv_objects();
